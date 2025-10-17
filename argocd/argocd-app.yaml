@@ -1,0 +1,25 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: davtro-website-app
+  namespace: argocd
+  finalizers:
+  - resources-finalizer.argocd.argoproj.io
+spec:
+  project: default
+  
+  source:
+    repoURL: https://github.com/exea-centrum/website-simple-argocd-k8s-github-kustomize.git
+    targetRevision: HEAD 
+    path: ./manifests/production # Wskazuje na manifests/production
+
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: davtrokyverno02 
+
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+    - CreateNamespace=true # Utworzy przestrzeń nazw 'davtro'
