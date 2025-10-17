@@ -24,6 +24,10 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GHCR_PAT }}
 
+      # 💥 KROK NAPRAWIAJĄCY BŁĄD BUFOROWANIA 💥
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
       - name: Extract metadata (tags, labels) for Docker
         id: meta
         uses: docker/metadata-action@v5
