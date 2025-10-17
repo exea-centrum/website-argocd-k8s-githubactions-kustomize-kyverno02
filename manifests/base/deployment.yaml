@@ -17,16 +17,16 @@ spec:
         vault.hashicorp.com/agent-inject: "true"
         vault.hashicorp.com/role: "website-k8s-role"
     spec:
-      serviceAccountName: website-sa 
+      serviceAccountName: website-sa
       containers:
-      - name: website
-        image: ghcr.io/exea-centrum/website-simple-argocd-k8s-github-kustomize:v1.0.0-placeholder # TAG do zastąpienia przez Kustomize/ArgoCD
-        ports:
-        - containerPort: 80
-        resources:
-          limits:
-            memory: "128Mi"
-            cpu: "500m"
+        - name: website
+          image: ghcr.io/exea-centrum/website-argocd-k8s-githubactions-kustomize-kyverno02:v1.0.0-placeholder # TAG do zastąpienia przez Kustomize/ArgoCD
+          ports:
+            - containerPort: 80
+          resources:
+            limits:
+              memory: "128Mi"
+              cpu: "500m"
 ---
 apiVersion: v1
 kind: ServiceAccount # SA dla Kyverno/Vault
