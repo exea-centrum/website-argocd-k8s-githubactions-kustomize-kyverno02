@@ -9,9 +9,11 @@ jobs:
   build-and-push:
     runs-on: ubuntu-latest
 
+    # Użycie zmiennych zdefiniowanych w skrypcie setup_repo.sh
     env:
-      IMAGE_NAME: website-simple-argocd-k8s-github-kustomize
-      NAMESPACE: davtrokyverno02
+      IMAGE_NAME: website-argocd-k8s-githubactions-kustomize-kyverno02
+      NAMESPACE: davtrokverno02
+      KUSTOMIZE_PATH: manifests/production # Dodaj ścieżkę do Kustomize
 
     steps:
       - name: Checkout code
@@ -38,6 +40,7 @@ jobs:
             type=raw,value=latest,enable=${{ github.ref == format('refs/heads/{0}', 'main') }}
 
       - name: Build and push Docker image
+        id: build
         uses: docker/build-push-action@v5
         with:
           context: .
@@ -47,6 +50,29 @@ jobs:
           cache-from: type=gha
           cache-to: type=gha,mode=max
 
+      # --- START: KROKI NAPRAWIAJĄCE BŁĄD ImagePullBackOff ---
+      - name: Get Short SHA Tag
+        id: tag
+        # Pobieramy krótki SHA (pierwsze 7 znaków) jako faktyczny tag.
+        run: echo "SHA_TAG=${GITHUB_SHA::7}" >> $GITHUB_OUTPUT
+
+      - name: Configure Git
+        run: |
+          git config user.name github-actions[bot]
+          git config user.email github-actions[bot]@users.noreply.github.com
+
+      - name: Update Kustomization with new image tag
+        # Używamy kustomize edit set image, aby bezpiecznie zaktualizować tag w overlayu production.
+        run: |
+          kustomize edit set image ghcr.io/${{ github.repository_owner }}/${{ env.IMAGE_NAME }}:v1.0.0-placeholder=ghcr.io/${{ github.repository_owner }}/${{ env.IMAGE_NAME }}:${{ steps.tag.outputs.SHA_TAG }} --path ${{ env.KUSTOMIZE_PATH }}
+
+      - name: Commit and Push Kustomization changes
+        # Commitujemy i wypychamy zmiany. ArgoCD wykryje ten nowy commit i wdroży obraz z poprawnym tagiem.
+        run: |
+          git add ${{ env.KUSTOMIZE_PATH }}/kustomization.yaml
+          git commit -m "chore(gitops): update ${{ env.IMAGE_NAME }} image tag to ${{ steps.tag.outputs.SHA_TAG }} [skip ci]"
+          git push
+      # --- KONIEC: KROKI NAPRAWIAJĄCE BŁĄD ImagePullBackOff ---
       - name: Output Image Tag
         run: |
-          echo "Obraz został wypchnięty jako: ghcr.io/${{ github.repository_owner }}/${{ env.IMAGE_NAME }}:${{ steps.meta.outputs.sha }}"
+          echo "Obraz został wypchnięty jako: ghcr.io/${{ github.repository_owner }}/${{ env.IMAGE_NAME }}:${{ steps.tag.outputs.SHA_TAG }}"
