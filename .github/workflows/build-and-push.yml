@@ -13,7 +13,8 @@ jobs:
     env:
       IMAGE_NAME: website-argocd-k8s-githubactions-kustomize-kyverno02
       NAMESPACE: davtrokverno02
-      KUSTOMIZE_PATH: manifests/production # Dodaj ścieżkę do Kustomize
+      KUSTOMIZE_PATH: manifests/production # Ścieżka do Kustomize
+      PLACEHOLDER_TAG: v1.0.0-placeholder # Używamy stałej dla czytelności
 
     steps:
       - name: Checkout code
@@ -24,9 +25,10 @@ jobs:
         with:
           registry: ghcr.io
           username: ${{ github.actor }}
+          # W Twoim kodzie używasz GHCR_PAT, zostawiam, ale rekomendowane jest użycie GITHUB_TOKEN dla akcji repozytoryjnych.
           password: ${{ secrets.GHCR_PAT }}
 
-      # 💥 KROK NAPRAWIAJĄCY BŁĄD BUFOROWANIA 💥
+      # KROK NAPRAWIAJĄCY BŁĄD BUFOROWANIA
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
 
@@ -50,7 +52,8 @@ jobs:
           cache-from: type=gha
           cache-to: type=gha,mode=max
 
-      # --- START: KROKI NAPRAWIAJĄCE BŁĄD ImagePullBackOff ---
+      # --- START: KROKI NAPRAWIAJĄCE BŁĄD ImagePullBackOff & Kustomize ---
+
       - name: Get Short SHA Tag
         id: tag
         # Pobieramy krótki SHA (pierwsze 7 znaków) jako faktyczny tag.
@@ -62,9 +65,11 @@ jobs:
           git config user.email github-actions[bot]@users.noreply.github.com
 
       - name: Update Kustomization with new image tag
-        # Używamy kustomize edit set image, aby bezpiecznie zaktualizować tag w overlayu production.
+        # 🎯 POPRAWKA: Używamy working-directory, aby przejść do katalogu Kustomize
+        working-directory: ${{ env.KUSTOMIZE_PATH }}
         run: |
-          kustomize edit set image ghcr.io/${{ github.repository_owner }}/${{ env.IMAGE_NAME }}:v1.0.0-placeholder=ghcr.io/${{ github.repository_owner }}/${{ env.IMAGE_NAME }}:${{ steps.tag.outputs.SHA_TAG }} --path ${{ env.KUSTOMIZE_PATH }}
+          # Usunięto "--path"
+          kustomize edit set image ghcr.io/${{ github.repository_owner }}/${{ env.IMAGE_NAME }}:${{ env.PLACEHOLDER_TAG }}=ghcr.io/${{ github.repository_owner }}/${{ env.IMAGE_NAME }}:${{ steps.tag.outputs.SHA_TAG }}
 
       - name: Commit and Push Kustomization changes
         # Commitujemy i wypychamy zmiany. ArgoCD wykryje ten nowy commit i wdroży obraz z poprawnym tagiem.
@@ -72,7 +77,7 @@ jobs:
           git add ${{ env.KUSTOMIZE_PATH }}/kustomization.yaml
           git commit -m "chore(gitops): update ${{ env.IMAGE_NAME }} image tag to ${{ steps.tag.outputs.SHA_TAG }} [skip ci]"
           git push
-      # --- KONIEC: KROKI NAPRAWIAJĄCE BŁĄD ImagePullBackOff ---
+      # --- KONIEC: KROKI NAPRAWIAJĄCE BŁĄD ImagePullBackOff & Kustomize ---
       - name: Output Image Tag
         run: |
           echo "Obraz został wypchnięty jako: ghcr.io/${{ github.repository_owner }}/${{ env.IMAGE_NAME }}:${{ steps.tag.outputs.SHA_TAG }}"
