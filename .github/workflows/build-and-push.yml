@@ -12,7 +12,7 @@ jobs:
     # Użycie zmiennych zdefiniowanych w skrypcie setup_repo.sh
     env:
       IMAGE_NAME: website-argocd-k8s-githubactions-kustomize-kyverno02
-      NAMESPACE: davtrokverno02
+      NAMESPACE: davtrokyverno02
       KUSTOMIZE_PATH: manifests/production # Ścieżka do Kustomize
       PLACEHOLDER_TAG: v1.0.0-placeholder # Używamy stałej dla czytelności
 
