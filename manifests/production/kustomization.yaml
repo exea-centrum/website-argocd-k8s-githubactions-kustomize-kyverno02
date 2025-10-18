@@ -20,4 +20,4 @@ patches:
 images:
 - name: ghcr.io/exea-centrum/website-argocd-k8s-githubactions-kustomize-kyverno02:v1.0.0-placeholder
   newName: ghcr.io/exea-centrum/website-argocd-k8s-githubactions-kustomize-kyverno02
-  newTag: a7f4739
+  newTag: b12d517
