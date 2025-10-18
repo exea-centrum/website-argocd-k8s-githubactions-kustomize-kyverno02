@@ -1,0 +1,838 @@
+<!DOCTYPE html>
+<html lang="pl">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Dawid Trojanowski - Nowoczesne Portfolio</title>
+
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- Biblioteki 3D i animacji -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.11.4/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.11.4/ScrollTrigger.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet" />
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+
+    <style>
+      @import url("https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap");
+
+      :root {
+        --primary: #8b5cf6;
+        --secondary: #ec4899;
+        --dark: #1e293b;
+        --light: #f8fafc;
+      }
+
+      body {
+        font-family: "Inter", sans-serif;
+        background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+        color: var(--light);
+        overflow-x: hidden;
+      }
+
+      .text-gradient {
+        background: linear-gradient(90deg, var(--primary), var(--secondary));
+        -webkit-background-clip: text;
+        background-clip: text;
+        color: transparent;
+      }
+
+      .card {
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+      }
+
+      .card:hover {
+        transform: translateY(-10px);
+        box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1),
+          0 10px 10px -5px rgba(0, 0, 0, 0.04);
+      }
+
+      .skill-bar {
+        height: 10px;
+        background: rgba(255, 255, 255, 0.1);
+        border-radius: 5px;
+        overflow: hidden;
+        position: relative;
+      }
+
+      .skill-progress {
+        height: 100%;
+        border-radius: 5px;
+        transition: width 1.5s ease-in-out;
+      }
+
+      .particle {
+        position: absolute;
+        border-radius: 50%;
+        pointer-events: none;
+        mix-blend-mode: soft-light;
+      }
+
+      .hamburger {
+        display: none;
+      }
+
+      @media (max-width: 768px) {
+        .hamburger {
+          display: flex;
+          flex-direction: column;
+          cursor: pointer;
+        }
+
+        .hamburger span {
+          width: 25px;
+          height: 3px;
+          background: var(--primary);
+          margin: 3px 0;
+          transition: 0.3s;
+        }
+
+        .hamburger.active span:nth-child(1) {
+          transform: rotate(45deg) translate(-5px, 6px);
+        }
+
+        .hamburger.active span:nth-child(2) {
+          opacity: 0;
+        }
+
+        .hamburger.active span:nth-child(3) {
+          transform: rotate(-45deg) translate(-5px, -6px);
+        }
+      }
+
+      /* Animacje */
+      @keyframes float {
+        0%,
+        100% {
+          transform: translateY(0) rotate(0deg);
+        }
+        50% {
+          transform: translateY(-20px) rotate(5deg);
+        }
+      }
+
+      .float-animation {
+        animation: float 6s ease-in-out infinite;
+      }
+    </style>
+  </head>
+  <body class="min-h-screen">
+    <!-- 3D Particles Background -->
+    <div
+      id="particles-container"
+      class="fixed top-0 left-0 w-full h-full -z-10"
+    ></div>
+
+    <!-- Header -->
+    <header
+      class="border-b border-purple-500/30 backdrop-blur-sm bg-black/20 sticky top-0 z-50"
+    >
+      <div class="container mx-auto px-6 py-4">
+        <div class="flex items-center justify-between">
+          <div class="flex items-center gap-3">
+            <div
+              class="w-10 h-10 rounded-full bg-gradient-to-br from-purple-500 to-pink-500 flex items-center justify-center"
+            >
+              <span class="text-lg font-bold">DT</span>
+            </div>
+            <h1 class="text-3xl font-bold text-gradient">Dawid Trojanowski</h1>
+          </div>
+
+          <div class="flex items-center gap-4">
+            <!-- Theme Toggle -->
+            <button
+              id="theme-toggle"
+              class="p-3 rounded-full bg-purple-500/20 hover:bg-purple-500/40 transition-colors"
+            >
+              <svg
+                id="sun-icon"
+                class="w-5 h-5 text-yellow-300"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"
+                />
+              </svg>
+              <svg
+                id="moon-icon"
+                class="w-5 h-5 text-purple-300 hidden"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"
+                />
+              </svg>
+            </button>
+
+            <!-- Mobile Menu -->
+            <div class="hamburger" id="hamburger">
+              <span></span>
+              <span></span>
+              <span></span>
+            </div>
+
+            <!-- Navigation -->
+            <nav id="nav-menu" class="flex gap-6">
+              <button
+                onclick="showTab('intro')"
+                class="tab-btn px-4 py-2 rounded-lg transition-all text-purple-300 hover:bg-purple-500/20"
+              >
+                O Mnie
+              </button>
+              <button
+                onclick="showTab('edu')"
+                class="tab-btn px-4 py-2 rounded-lg transition-all text-purple-300 hover:bg-purple-500/20"
+              >
+                Edukacja
+              </button>
+              <button
+                onclick="showTab('exp')"
+                class="tab-btn px-4 py-2 rounded-lg transition-all text-purple-300 hover:bg-purple-500/20"
+              >
+                Doświadczenie
+              </button>
+              <button
+                onclick="showTab('skills')"
+                class="tab-btn px-4 py-2 rounded-lg transition-all text-purple-300 hover:bg-purple-500/20"
+              >
+                Umiejętności
+              </button>
+              <button
+                onclick="showTab('contact')"
+                class="tab-btn px-4 py-2 rounded-lg transition-all text-purple-300 hover:bg-purple-500/20"
+              >
+                Kontakt
+              </button>
+            </nav>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="container mx-auto px-6 py-12 relative z-10">
+      <!-- O Mnie -->
+      <div id="intro-tab" class="tab-content" data-aos="fade-up">
+        <div class="space-y-8">
+          <div
+            class="bg-gradient-to-br from-purple-500/10 to-pink-500/10 backdrop-blur-lg border border-purple-500/20 rounded-2xl p-8 card float-animation"
+          >
+            <h2 class="text-4xl font-bold mb-6 text-gradient">O Mnie</h2>
+            <p class="text-lg text-gray-300 leading-relaxed mb-4">
+              Cześć! Jestem Dawidem Trojanowskim, pasjonatem informatyki i
+              nowych technologii. Zawsze dążyłem do rozwijania swoich
+              umiejętności w programowaniu i rozwiązywaniu złożonych problemów.
+              Moja ścieżka edukacyjna i zawodowa skupia się na informatyce
+              stosowanej, gdzie łączę teorię z praktyką.
+            </p>
+            <p class="text-lg text-gray-300 leading-relaxed">
+              Poza pracą interesuję się sportem, czytaniem książek i podróżami.
+              Lubię wyzwania, które pozwalają mi rosnąć zarówno zawodowo, jak i
+              osobowo.
+            </p>
+          </div>
+
+          <div class="grid md:grid-cols-3 gap-6">
+            <div
+              class="bg-gradient-to-br from-blue-500/10 to-purple-500/10 backdrop-blur-lg border border-blue-500/20 rounded-xl p-6 card"
+              onclick="showTab('edu')"
+            >
+              <h3 class="text-xl font-bold mb-3 text-blue-300">Edukacja</h3>
+              <p class="text-gray-400">
+                Studia informatyczne na renomowanych uczelniach
+              </p>
+            </div>
+            <div
+              class="bg-gradient-to-br from-green-500/10 to-emerald-500/10 backdrop-blur-lg border border-green-500/20 rounded-xl p-6 card"
+              onclick="showTab('exp')"
+            >
+              <h3 class="text-xl font-bold mb-3 text-green-300">
+                Doświadczenie
+              </h3>
+              <p class="text-gray-400">Praktyki i projekty w branży IT</p>
+            </div>
+            <div
+              class="bg-gradient-to-br from-pink-500/10 to-rose-500/10 backdrop-blur-lg border border-pink-500/20 rounded-xl p-6 card"
+              onclick="showTab('skills')"
+            >
+              <h3 class="text-xl font-bold mb-3 text-pink-300">
+                Zainteresowania
+              </h3>
+              <p class="text-gray-400">Technologie, sport i rozwój osobisty</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Edukacja -->
+      <div id="edu-tab" class="tab-content hidden" data-aos="fade-up">
+        <div class="space-y-6">
+          <h2 class="text-4xl font-bold mb-8 text-gradient">Edukacja</h2>
+
+          <div
+            class="bg-gradient-to-br from-slate-800/50 to-slate-900/50 backdrop-blur-lg border border-purple-500/20 rounded-xl p-6 card"
+          >
+            <h3 class="text-2xl font-bold mb-4 text-purple-300">
+              Politechnika Warszawska
+            </h3>
+            <p class="text-gray-300 mb-4">Informatyka, studia magisterskie</p>
+            <ul class="space-y-2">
+              <li class="text-gray-400 flex items-center gap-2">
+                <span class="w-1.5 h-1.5 rounded-full bg-purple-400"></span>
+                Specjalizacja w sztucznej inteligencji i uczeniu maszynowym
+              </li>
+              <li class="text-gray-400 flex items-center gap-2">
+                <span class="w-1.5 h-1.5 rounded-full bg-purple-400"></span>
+                Praca dyplomowa: "Zastosowanie sieci neuronowych w analizie
+                danych"
+              </li>
+              <li class="text-gray-400 flex items-center gap-2">
+                <span class="w-1.5 h-1.5 rounded-full bg-purple-400"></span>
+                Średnia ocen: 4.5/5
+              </li>
+            </ul>
+          </div>
+
+          <div
+            class="bg-gradient-to-br from-slate-800/50 to-slate-900/50 backdrop-blur-lg border border-purple-500/20 rounded-xl p-6 card"
+          >
+            <h3 class="text-2xl font-bold mb-4 text-purple-300">
+              Uniwersytet Warszawski
+            </h3>
+            <p class="text-gray-300 mb-4">Informatyka, studia licencjackie</p>
+            <ul class="space-y-2">
+              <li class="text-gray-400 flex items-center gap-2">
+                <span class="w-1.5 h-1.5 rounded-full bg-purple-400"></span>
+                Podstawy programowania i algorytmiki
+              </li>
+              <li class="text-gray-400 flex items-center gap-2">
+                <span class="w-1.5 h-1.5 rounded-full bg-purple-400"></span>
+                Projekty grupowe w Java i Python
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <!-- Doświadczenie -->
+      <div id="exp-tab" class="tab-content hidden" data-aos="fade-up">
+        <div class="space-y-6">
+          <h2 class="text-4xl font-bold mb-8 text-gradient">
+            Doświadczenie Zawodowe
+          </h2>
+
+          <div
+            class="bg-gradient-to-br from-slate-800/50 to-slate-900/50 backdrop-blur-lg border border-purple-500/20 rounded-xl p-6 card"
+          >
+            <h3 class="text-2xl font-bold mb-4 text-purple-300">
+              Junior Developer - TechCorp
+            </h3>
+            <p class="text-gray-300 mb-4">Styczeń 2023 - Obecnie</p>
+            <ul class="space-y-2">
+              <li class="text-gray-400 flex items-center gap-2">
+                <span class="w-1.5 h-1.5 rounded-full bg-purple-400"></span>
+                Rozwój aplikacji webowych w React i Node.js
+              </li>
+              <li class="text-gray-400 flex items-center gap-2">
+                <span class="w-1.5 h-1.5 rounded-full bg-purple-400"></span>
+                Optymalizacja baz danych SQL
+              </li>
+              <li class="text-gray-400 flex items-center gap-2">
+                <span class="w-1.5 h-1.5 rounded-full bg-purple-400"></span>
+                Współpraca z zespołem w metodologii Agile
+              </li>
+            </ul>
+          </div>
+
+          <div
+            class="bg-gradient-to-br from-slate-800/50 to-slate-900/50 backdrop-blur-lg border border-purple-500/20 rounded-xl p-6 card"
+          >
+            <h3 class="text-2xl font-bold mb-4 text-purple-300">
+              Praktykant - Startup AI
+            </h3>
+            <p class="text-gray-300 mb-4">Czerwiec 2022 - Sierpień 2022</p>
+            <ul class="space-y-2">
+              <li class="text-gray-400 flex items-center gap-2">
+                <span class="w-1.5 h-1.5 rounded-full bg-purple-400"></span>
+                Implementacja modeli ML w Python
+              </li>
+              <li class="text-gray-400 flex items-center gap-2">
+                <span class="w-1.5 h-1.5 rounded-full bg-purple-400"></span>
+                Analiza danych z wykorzystaniem Pandas i Scikit-learn
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <!-- Umiejętności -->
+      <div id="skills-tab" class="tab-content hidden" data-aos="fade-up">
+        <div class="space-y-6">
+          <h2 class="text-4xl font-bold mb-8 text-gradient">Umiejętności</h2>
+
+          <div class="grid md:grid-cols-2 gap-6">
+            <div
+              class="bg-gradient-to-br from-slate-800/50 to-slate-900/50 backdrop-blur-lg border border-purple-500/20 rounded-xl p-6 card"
+            >
+              <h3 class="text-2xl font-bold mb-4 text-purple-300">
+                Techniczne
+              </h3>
+              <div class="space-y-6">
+                <div>
+                  <div class="flex justify-between mb-1">
+                    <span class="text-gray-300">Python</span>
+                    <span class="text-purple-300">90%</span>
+                  </div>
+                  <div class="skill-bar">
+                    <div
+                      class="skill-progress bg-gradient-to-r from-purple-500 to-pink-500"
+                      style="width: 90%"
+                    ></div>
+                  </div>
+                </div>
+                <div>
+                  <div class="flex justify-between mb-1">
+                    <span class="text-gray-300">JavaScript</span>
+                    <span class="text-purple-300">85%</span>
+                  </div>
+                  <div class="skill-bar">
+                    <div
+                      class="skill-progress bg-gradient-to-r from-purple-500 to-pink-500"
+                      style="width: 85%"
+                    ></div>
+                  </div>
+                </div>
+                <div>
+                  <div class="flex justify-between mb-1">
+                    <span class="text-gray-300">React</span>
+                    <span class="text-purple-300">80%</span>
+                  </div>
+                  <div class="skill-bar">
+                    <div
+                      class="skill-progress bg-gradient-to-r from-purple-500 to-pink-500"
+                      style="width: 80%"
+                    ></div>
+                  </div>
+                </div>
+                <div>
+                  <div class="flex justify-between mb-1">
+                    <span class="text-gray-300">SQL</span>
+                    <span class="text-purple-300">75%</span>
+                  </div>
+                  <div class="skill-bar">
+                    <div
+                      class="skill-progress bg-gradient-to-r from-purple-500 to-pink-500"
+                      style="width: 75%"
+                    ></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div
+              class="bg-gradient-to-br from-slate-800/50 to-slate-900/50 backdrop-blur-lg border border-purple-500/20 rounded-xl p-6 card"
+            >
+              <h3 class="text-2xl font-bold mb-4 text-purple-300">Języki</h3>
+              <canvas id="languageChart"></canvas>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Kontakt -->
+      <div id="contact-tab" class="tab-content hidden" data-aos="fade-up">
+        <div class="space-y-8">
+          <div
+            class="bg-gradient-to-br from-purple-500/10 to-pink-500/10 backdrop-blur-lg border border-purple-500/20 rounded-2xl p-8 card"
+          >
+            <h2 class="text-4xl font-bold mb-6 text-gradient">Kontakt</h2>
+            <p class="text-lg text-gray-300 mb-8">
+              Chętnie porozmawiam o możliwościach współpracy lub po prostu o
+              pasjach!
+            </p>
+
+            <div class="grid md:grid-cols-2 gap-6">
+              <div class="space-y-4">
+                <div>
+                  <label class="block text-gray-400 mb-2">Email</label>
+                  <input
+                    type="email"
+                    id="email-input"
+                    placeholder="Twój email"
+                    class="w-full py-3 px-4 rounded-lg bg-slate-700 text-white border border-purple-500/30 focus:border-purple-400 outline-none transition-colors"
+                  />
+                </div>
+                <div>
+                  <label class="block text-gray-400 mb-2">Wiadomość</label>
+                  <textarea
+                    id="message-input"
+                    placeholder="Twoja wiadomość"
+                    rows="4"
+                    class="w-full py-3 px-4 rounded-lg bg-slate-700 text-white border border-purple-500/30 focus:border-purple-400 outline-none transition-colors"
+                  ></textarea>
+                </div>
+                <button
+                  id="send-btn"
+                  class="w-full py-3 px-4 rounded-lg bg-purple-500 text-white hover:bg-purple-600 transition-all flex items-center justify-center gap-2"
+                >
+                  Wyślij
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    class="h-5 w-5"
+                    viewBox="0 0 20 20"
+                    fill="currentColor"
+                  >
+                    <path
+                      fill-rule="evenodd"
+                      d="M10.293 3.293a1 1 0 011.414 0l6 6a1 1 0 010 1.414l-6 6a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-4.293-4.293a1 1 0 010-1.414z"
+                      clip-rule="evenodd"
+                    />
+                  </svg>
+                </button>
+                <div id="form-message" class="mt-4 hidden p-3 rounded-lg"></div>
+              </div>
+
+              <div class="space-y-4">
+                <div
+                  class="bg-slate-800/50 rounded-xl p-4 hover:bg-slate-700/50 transition-colors card"
+                >
+                  <p class="text-gray-400 mb-1">Email</p>
+                  <p class="text-purple-300">dawid.trojanowski@example.com</p>
+                </div>
+                <div
+                  class="bg-slate-800/50 rounded-xl p-4 hover:bg-slate-700/50 transition-colors card"
+                >
+                  <p class="text-gray-400 mb-1">LinkedIn</p>
+                  <p class="text-purple-300">
+                    linkedin.com/in/dawid-trojanowski
+                  </p>
+                </div>
+                <div
+                  class="bg-slate-800/50 rounded-xl p-4 hover:bg-slate-700/50 transition-colors card"
+                >
+                  <p class="text-gray-400 mb-1">GitHub</p>
+                  <p class="text-purple-300">github.com/dawidtrojanowski</p>
+                </div>
+                <div
+                  class="bg-slate-800/50 rounded-xl p-4 hover:bg-slate-700/50 transition-colors card"
+                >
+                  <p class="text-gray-400 mb-1">Telefon</p>
+                  <p class="text-purple-300">+48 123 456 789</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+
+    <!-- Footer -->
+    <footer
+      class="border-t border-purple-500/30 backdrop-blur-sm bg-black/20 mt-16"
+    >
+      <div class="container mx-auto px-6 py-8 text-center text-gray-400">
+        <p>Dawid Trojanowski © 2025</p>
+      </div>
+    </footer>
+
+    <script>
+      // Inicjalizacja AOS
+      AOS.init({
+        duration: 800,
+        once: true,
+        easing: "ease-in-out",
+      });
+
+      // Tab switching functionality
+      function showTab(tabName) {
+        document.querySelectorAll(".tab-content").forEach((tab) => {
+          tab.classList.add("hidden");
+          tab.classList.remove("animate-fade-in");
+        });
+
+        setTimeout(() => {
+          const activeTab = document.getElementById(tabName + "-tab");
+          activeTab.classList.remove("hidden");
+          activeTab.classList.add("animate-fade-in");
+          AOS.refresh(); // Odśwież animacje AOS
+
+          // Animate skill bars when skills tab is shown
+          if (tabName === "skills") {
+            setTimeout(animateSkillBars, 300);
+          }
+        }, 50);
+
+        document.querySelectorAll(".tab-btn").forEach((btn) => {
+          btn.classList.remove("bg-purple-500", "text-white");
+          btn.classList.add("text-purple-300");
+        });
+        document
+          .querySelector(`[data-tab="${tabName}"]`)
+          .classList.add("bg-purple-500", "text-white");
+
+        // Close mobile menu if open
+        closeMobileMenu();
+      }
+
+      // Theme toggle functionality
+      const themeToggle = document.getElementById("theme-toggle");
+      const sunIcon = document.getElementById("sun-icon");
+      const moonIcon = document.getElementById("moon-icon");
+
+      themeToggle.addEventListener("click", () => {
+        document.body.classList.toggle("light-mode");
+
+        if (document.body.classList.contains("light-mode")) {
+          document.body.className =
+            "bg-gradient-to-br from-slate-100 via-purple-100 to-slate-100 text-slate-800 min-h-screen transition-colors duration-500";
+          sunIcon.classList.add("hidden");
+          moonIcon.classList.remove("hidden");
+        } else {
+          document.body.className =
+            "bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 text-white min-h-screen transition-colors duration-500";
+          sunIcon.classList.remove("hidden");
+          moonIcon.classList.add("hidden");
+        }
+      });
+
+      // Mobile menu functionality
+      const hamburger = document.getElementById("hamburger");
+      const navMenu = document.getElementById("nav-menu");
+
+      function toggleMobileMenu() {
+        hamburger.classList.toggle("active");
+        navMenu.classList.toggle("active");
+      }
+
+      function closeMobileMenu() {
+        hamburger.classList.remove("active");
+        navMenu.classList.remove("active");
+      }
+
+      hamburger.addEventListener("click", toggleMobileMenu);
+
+      // Close menu when clicking outside
+      document.addEventListener("click", (e) => {
+        if (!hamburger.contains(e.target) && !navMenu.contains(e.target)) {
+          closeMobileMenu();
+        }
+      });
+
+      // Skill bars animation
+      function animateSkillBars() {
+        const skillBars = document.querySelectorAll(".skill-progress");
+        skillBars.forEach((bar) => {
+          const width = bar.style.width;
+          bar.style.width = "0";
+          setTimeout(() => {
+            bar.style.width = width;
+          }, 100);
+        });
+      }
+
+      // Contact form functionality
+      const sendBtn = document.getElementById("send-btn");
+      const emailInput = document.getElementById("email-input");
+      const messageInput = document.getElementById("message-input");
+      const formMessage = document.getElementById("form-message");
+
+      sendBtn.addEventListener("click", () => {
+        const email = emailInput.value.trim();
+        const message = messageInput.value.trim();
+
+        if (!email || !message) {
+          showFormMessage("Proszę wypełnić wszystkie pola", "error");
+          return;
+        }
+
+        if (!validateEmail(email)) {
+          showFormMessage("Proszę podać poprawny adres email", "error");
+          return;
+        }
+
+        // Simulate form submission
+        showFormMessage(
+          "Wiadomość została wysłana! Dziękuję za kontakt.",
+          "success"
+        );
+        emailInput.value = "";
+        messageInput.value = "";
+      });
+
+      function validateEmail(email) {
+        const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        return re.test(email);
+      }
+
+      function showFormMessage(text, type) {
+        formMessage.textContent = text;
+        formMessage.className = "mt-4 p-3 rounded-lg";
+
+        if (type === "error") {
+          formMessage.classList.add(
+            "bg-red-500/20",
+            "text-red-300",
+            "border",
+            "border-red-500/30"
+          );
+        } else {
+          formMessage.classList.add(
+            "bg-green-500/20",
+            "text-green-300",
+            "border",
+            "border-green-500/30"
+          );
+        }
+
+        formMessage.classList.remove("hidden");
+
+        setTimeout(() => {
+          formMessage.classList.add("hidden");
+        }, 5000);
+      }
+
+      // Floating particles effect
+      function createParticles() {
+        const container = document.getElementById("particles-container");
+        const particleCount = 30;
+
+        for (let i = 0; i < particleCount; i++) {
+          const particle = document.createElement("div");
+          particle.classList.add("particle");
+
+          const size = Math.random() * 60 + 20;
+          particle.style.width = `${size}px`;
+          particle.style.height = `${size}px`;
+          particle.style.background = `radial-gradient(circle, rgba(168, 85, 247, 0.7) 0%, rgba(236, 72, 153, 0.3) 70%, transparent 100%)`;
+          particle.style.left = `${Math.random() * 100}%`;
+          particle.style.top = `${Math.random() * 100}%`;
+          particle.style.animation = `float ${
+            Math.random() * 20 + 10
+          }s infinite ease-in-out`;
+
+          container.appendChild(particle);
+        }
+      }
+
+      // 3D Particles with Three.js
+      function createThreeJSParticles() {
+        const container = document.getElementById("particles-container");
+        const scene = new THREE.Scene();
+        const camera = new THREE.PerspectiveCamera(
+          75,
+          window.innerWidth / window.innerHeight,
+          0.1,
+          1000
+        );
+        const renderer = new THREE.WebGLRenderer({
+          antialias: true,
+          alpha: true,
+        });
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        container.appendChild(renderer.domElement);
+
+        // Cząsteczki
+        const particlesGeometry = new THREE.BufferGeometry();
+        const particlesCount = 1000;
+        const positions = new Float32Array(particlesCount * 3);
+        const colors = [];
+
+        for (let i = 0; i < particlesCount * 3; i++) {
+          positions[i] = (Math.random() - 0.5) * 10;
+          colors.push(Math.random(), Math.random(), Math.random());
+        }
+
+        particlesGeometry.setAttribute(
+          "position",
+          new THREE.BufferAttribute(positions, 3)
+        );
+        particlesGeometry.setAttribute(
+          "color",
+          new THREE.BufferAttribute(new Float32Array(colors), 3)
+        );
+
+        const particlesMaterial = new THREE.PointsMaterial({
+          color: 0x9d4edd,
+          size: 0.1,
+          transparent: true,
+          opacity: 0.8,
+          vertexColors: true,
+        });
+
+        const particles = new THREE.Points(
+          particlesGeometry,
+          particlesMaterial
+        );
+        scene.add(particles);
+
+        camera.position.z = 5;
+
+        // Animacja
+        function animate() {
+          requestAnimationFrame(animate);
+          particles.rotation.x += 0.001;
+          particles.rotation.y += 0.001;
+          renderer.render(scene, camera);
+        }
+        animate();
+
+        // Responsywność
+        window.addEventListener("resize", () => {
+          camera.aspect = window.innerWidth / window.innerHeight;
+          camera.updateProjectionMatrix();
+          renderer.setSize(window.innerWidth, window.innerHeight);
+        });
+      }
+
+      // Initialize on page load
+      document.addEventListener("DOMContentLoaded", () => {
+        showTab("intro");
+        createParticles();
+        createThreeJSParticles();
+
+        // Inicjalizacja wykresu umiejętności językowych
+        const ctx = document.getElementById("languageChart").getContext("2d");
+        const languageChart = new Chart(ctx, {
+          type: "radar",
+          data: {
+            labels: ["Polski", "Angielski", "Niemiecki"],
+            datasets: [
+              {
+                label: "Poziom zaawansowania",
+                data: [100, 85, 40],
+                backgroundColor: "rgba(168, 85, 247, 0.2)",
+                borderColor: "rgba(168, 85, 247, 1)",
+                borderWidth: 2,
+                pointBackgroundColor: "rgba(168, 85, 247, 1)",
+              },
+            ],
+          },
+          options: {
+            scales: {
+              r: {
+                angleLines: {
+                  display: true,
+                },
+                suggestedMin: 0,
+                suggestedMax: 100,
+              },
+            },
+          },
+        });
+      });
+    </script>
+  </body>
+</html>

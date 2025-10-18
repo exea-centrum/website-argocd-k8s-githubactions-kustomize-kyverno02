@@ -1,0 +1,928 @@
+<!DOCTYPE html>
+<html lang="pl">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Dawid Trojanowski - Portfolio</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Nowe technologie i bajery -->
+    <!-- tsParticles dla zaawansowanych particle effects -->
+    <script src="https://cdn.jsdelivr.net/npm/tsparticles@3/tsparticles.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@tsparticles/preset-links@3"></script>
+    <!-- GSAP dla zaawansowanych animacji -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+    <!-- Pyodide dla Python w przeglądarce -->
+    <script src="https://cdn.jsdelivr.net/pyodide/v0.24.1/full/pyodide.js"></script>
+    <!-- CodeMirror dla edytora kodu -->
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/codemirror.min.css"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/theme/monokai.min.css"
+    />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/codemirror.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/mode/python/python.min.js"></script>
+    <!-- EmailJS dla działającego formularza kontaktowego (zastąp ID poniżej) -->
+    <script
+      type="text/javascript"
+      src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"
+    ></script>
+    <style>
+      /* Istniejące style + nowe dla CodeMirror i light mode */
+      @keyframes fadeIn {
+        from {
+          opacity: 0;
+          transform: translateY(10px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+      .animate-fade-in {
+        animation: fadeIn 0.5s ease-out;
+      }
+      .CodeMirror {
+        height: 300px !important;
+        border: 1px solid #c084fc;
+        border-radius: 8px;
+      }
+      .light-mode .CodeMirror {
+        background: #1e1e1e !important;
+        color: white !important;
+      }
+      /* Light mode adjustments */
+      .light-mode {
+        --bg-primary: linear-gradient(to br, #f8fafc, #e2e8f0, #f8fafc);
+        --text-primary: #0f172a;
+        --card-bg: rgba(255, 255, 255, 0.8);
+        --border-color: rgba(148, 163, 184, 0.3);
+      }
+      .light-mode main {
+        color: var(--text-primary);
+      }
+      .light-mode .bg-slate-800 {
+        background: #f1f5f9 !important;
+      }
+      /* ... inne style bez zmian */
+      .hamburger {
+        /* bez zmian */
+      }
+      @media (max-width: 768px) {
+        /* bez zmian */
+      }
+    </style>
+  </head>
+  <body
+    class="bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 text-white min-h-screen transition-colors duration-500"
+  >
+    <!-- Zaawansowane particles z tsParticles (interaktywne, reagują na mysz) -->
+    <div
+      id="tsparticles"
+      class="fixed top-0 left-0 w-full h-full pointer-events-none z-0"
+    ></div>
+
+    <!-- Header bez zmian, ale dodaj buttony dla nowych tabów -->
+    <header
+      class="border-b border-purple-500/30 backdrop-blur-sm bg-black/20 sticky top-0 z-50 transition-colors duration-500"
+    >
+      <div class="container mx-auto px-6 py-4">
+        <div class="flex items-center justify-between">
+          <div class="flex items-center gap-3">
+            <svg
+              class="w-10 h-10 text-purple-400"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
+              ></path>
+            </svg>
+            <h1
+              class="text-3xl font-bold bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent"
+            >
+              Dawid Trojanowski
+            </h1>
+          </div>
+          <div class="flex items-center gap-4">
+            <button
+              id="theme-toggle"
+              class="p-2 rounded-full bg-purple-500/20 hover:bg-purple-500/40 transition-colors"
+            >
+              <svg
+                id="sun-icon"
+                class="w-6 h-6 text-yellow-300"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"
+                ></path>
+              </svg>
+              <svg
+                id="moon-icon"
+                class="w-6 h-6 text-purple-300 hidden"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"
+                ></path>
+              </svg>
+            </button>
+            <div class="hamburger" id="hamburger">
+              <span></span>
+              <span></span>
+              <span></span>
+            </div>
+            <nav id="nav-menu" class="flex gap-4">
+              <button
+                onclick="showTab('intro')"
+                class="tab-btn px-4 py-2 rounded-lg transition-all text-purple-300"
+                data-tab="intro"
+              >
+                O Mnie
+              </button>
+              <button
+                onclick="showTab('edu')"
+                class="tab-btn px-4 py-2 rounded-lg transition-all text-purple-300"
+                data-tab="edu"
+              >
+                Edukacja
+              </button>
+              <button
+                onclick="showTab('exp')"
+                class="tab-btn px-4 py-2 rounded-lg transition-all text-purple-300"
+                data-tab="exp"
+              >
+                Doświadczenie
+              </button>
+              <button
+                onclick="showTab('skills')"
+                class="tab-btn px-4 py-2 rounded-lg transition-all text-purple-300"
+                data-tab="skills"
+              >
+                Umiejętności
+              </button>
+              <button
+                onclick="showTab('proj')"
+                class="tab-btn px-4 py-2 rounded-lg transition-all text-purple-300"
+                data-tab="proj"
+              >
+                Projekty
+              </button>
+              <button
+                onclick="showTab('playground')"
+                class="tab-btn px-4 py-2 rounded-lg transition-all text-purple-300"
+                data-tab="playground"
+              >
+                Python Playground
+              </button>
+              <button
+                onclick="showTab('contact')"
+                class="tab-btn px-4 py-2 rounded-lg transition-all text-purple-300"
+                data-tab="contact"
+              >
+                Kontakt
+              </button>
+            </nav>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <main class="container mx-auto px-6 py-12 relative z-10">
+      <!-- O Mnie - zaktualizowany -->
+      <div id="intro-tab" class="tab-content">
+        <div class="space-y-8 animate-fade-in">
+          <div
+            class="bg-gradient-to-br from-purple-500/10 to-pink-500/10 backdrop-blur-lg border border-purple-500/20 rounded-2xl p-8"
+          >
+            <h2 class="text-4xl font-bold mb-6 text-purple-300 typewriter">
+              O Mnie
+            </h2>
+            <p class="text-lg text-gray-300 leading-relaxed mb-4">
+              Cześć! Jestem <strong>Dawidem Trojanowskim</strong>, studentem
+              ostatniego roku studiów magisterskich na kierunku
+              <strong>Informatyka stosowana</strong> na Politechnice
+              Warszawskiej. Pasjonuję się programowaniem, sztuczną inteligencją
+              i uczeniem maszynowym.
+            </p>
+            <p class="text-lg text-gray-300 leading-relaxed">
+              W wolnym czasie lubię grać w siatkówkę, oglądać filmy i seriale.
+              Zawsze dążę do rozwijania umiejętności i realizacji ciekawych
+              projektów.
+            </p>
+          </div>
+          <!-- Cards bez zmian -->
+        </div>
+      </div>
+
+      <!-- Edukacja - zaktualizowana z realnymi danymi -->
+      <div id="edu-tab" class="tab-content hidden">
+        <div class="space-y-6 animate-fade-in">
+          <h2 class="text-4xl font-bold mb-8 text-purple-300">Edukacja</h2>
+          <div class="grid md:grid-cols-2 gap-6">
+            <div
+              class="bg-gradient-to-br from-slate-800/50 to-slate-900/50 backdrop-blur-lg border border-purple-500/20 rounded-xl p-6"
+            >
+              <h3 class="text-2xl font-bold mb-4 text-purple-300">
+                Politechnika Warszawska
+              </h3>
+              <p class="text-gray-300 mb-4">
+                Informatyka stosowana (II stopnia, magisterskie)
+              </p>
+              <p class="text-purple-400 font-semibold mb-2">
+                Październik 2022 - Czerwiec 2024 (planowany)
+              </p>
+              <ul class="space-y-2">
+                <li class="text-gray-400 flex items-center gap-2">
+                  <span class="w-1.5 h-1.5 rounded-full bg-purple-400"></span>
+                  Średnia ocen: <strong>4.67/5</strong>
+                </li>
+                <li class="text-gray-400 flex items-center gap-2">
+                  <span class="w-1.5 h-1.5 rounded-full bg-purple-400"></span>
+                  Specjalizacja: AI i uczenie maszynowe
+                </li>
+              </ul>
+            </div>
+            <div
+              class="bg-gradient-to-br from-slate-800/50 to-slate-900/50 backdrop-blur-lg border border-purple-500/20 rounded-xl p-6"
+            >
+              <h3 class="text-2xl font-bold mb-4 text-purple-300">
+                Politechnika Warszawska
+              </h3>
+              <p class="text-gray-300 mb-4">
+                Informatyka stosowana (I stopnia, inżynierskie)
+              </p>
+              <p class="text-purple-400 font-semibold mb-2">
+                Październik 2019 - Lipiec 2022
+              </p>
+              <ul class="space-y-2">
+                <li class="text-gray-400 flex items-center gap-2">
+                  <span class="w-1.5 h-1.5 rounded-full bg-purple-400"></span>
+                  Średnia ocen: <strong>4.50/5</strong>
+                </li>
+                <li class="text-gray-400 flex items-center gap-2">
+                  <span class="w-1.5 h-1.5 rounded-full bg-purple-400"></span>
+                  Projekty z programowania i algorytmów
+                </li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Doświadczenie - zaktualizowane -->
+      <div id="exp-tab" class="tab-content hidden">
+        <div class="space-y-6 animate-fade-in">
+          <h2 class="text-4xl font-bold mb-8 text-purple-300">
+            Doświadczenie Zawodowe
+          </h2>
+          <div class="space-y-6">
+            <div
+              class="bg-gradient-to-br from-slate-800/50 to-slate-900/50 backdrop-blur-lg border border-purple-500/20 rounded-xl p-6"
+            >
+              <h3 class="text-2xl font-bold mb-4 text-purple-300">
+                Asystent badawczy
+              </h3>
+              <p class="text-gray-300 mb-4">
+                Laboratorium Inteligentnych Systemów, Politechnika Warszawska •
+                Październik 2023 - Obecnie
+              </p>
+              <ul class="space-y-2">
+                <li class="text-gray-400 flex items-center gap-2">
+                  <span class="w-1.5 h-1.5 rounded-full bg-purple-400"></span>
+                  Badania nad algorytmami uczenia ze wzmocnieniem (Reinforcement
+                  Learning)
+                </li>
+                <li class="text-gray-400 flex items-center gap-2">
+                  <span class="w-1.5 h-1.5 rounded-full bg-purple-400"></span>
+                  Optymalizacja sieci neuronowych
+                </li>
+              </ul>
+            </div>
+            <div
+              class="bg-gradient-to-br from-slate-800/50 to-slate-900/50 backdrop-blur-lg border border-purple-500/20 rounded-xl p-6"
+            >
+              <h3 class="text-2xl font-bold mb-4 text-purple-300">
+                Junior Python Developer
+              </h3>
+              <p class="text-gray-300 mb-4">
+                Nomagic • Czerwiec 2023 - Wrzesień 2023
+              </p>
+              <ul class="space-y-2">
+                <li class="text-gray-400 flex items-center gap-2">
+                  <span class="w-1.5 h-1.5 rounded-full bg-purple-400"></span>
+                  Rozwój backendu (Django, Celery, PostgreSQL)
+                </li>
+                <li class="text-gray-400 flex items-center gap-2">
+                  <span class="w-1.5 h-1.5 rounded-full bg-purple-400"></span>
+                  Integracja z API zewnętrznymi
+                </li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Umiejętności - zaktualizowane z realnymi danymi, animacja GSAP -->
+      <div id="skills-tab" class="tab-content hidden">
+        <div class="space-y-6 animate-fade-in">
+          <h2 class="text-4xl font-bold mb-8 text-purple-300">Umiejętności</h2>
+          <div class="grid md:grid-cols-2 gap-6">
+            <div
+              class="bg-gradient-to-br from-slate-800/50 to-slate-900/50 backdrop-blur-lg border border-purple-500/20 rounded-xl p-6"
+            >
+              <h3 class="text-2xl font-bold mb-4 text-purple-300">
+                Języki programowania
+              </h3>
+              <div class="space-y-4">
+                <div>
+                  <div class="flex justify-between mb-1">
+                    <span class="text-gray-300">Python</span
+                    ><span class="text-purple-300">90%</span>
+                  </div>
+                  <div class="skill-bar">
+                    <div
+                      class="skill-progress bg-gradient-to-r from-purple-500 to-pink-500"
+                      data-width="90%"
+                    ></div>
+                  </div>
+                </div>
+                <div>
+                  <div class="flex justify-between mb-1">
+                    <span class="text-gray-300">JavaScript / TypeScript</span
+                    ><span class="text-purple-300">75%</span>
+                  </div>
+                  <div class="skill-bar">
+                    <div
+                      class="skill-progress bg-gradient-to-r from-purple-500 to-pink-500"
+                      data-width="75%"
+                    ></div>
+                  </div>
+                </div>
+                <div>
+                  <div class="flex justify-between mb-1">
+                    <span class="text-gray-300">C++</span
+                    ><span class="text-purple-300">75%</span>
+                  </div>
+                  <div class="skill-bar">
+                    <div
+                      class="skill-progress bg-gradient-to-r from-purple-500 to-pink-500"
+                      data-width="75%"
+                    ></div>
+                  </div>
+                </div>
+                <div>
+                  <div class="flex justify-between mb-1">
+                    <span class="text-gray-300">Java</span
+                    ><span class="text-purple-300">50%</span>
+                  </div>
+                  <div class="skill-bar">
+                    <div
+                      class="skill-progress bg-gradient-to-r from-purple-500 to-pink-500"
+                      data-width="50%"
+                    ></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div
+              class="bg-gradient-to-br from-slate-800/50 to-slate-900/50 backdrop-blur-lg border border-purple-500/20 rounded-xl p-6"
+            >
+              <h3 class="text-2xl font-bold mb-4 text-purple-300">
+                Frameworki & Narzędzia
+              </h3>
+              <div class="space-y-4">
+                <div>
+                  <div class="flex justify-between mb-1">
+                    <span class="text-gray-300">Django / FastAPI</span
+                    ><span class="text-purple-300">80%</span>
+                  </div>
+                  <div class="skill-bar">
+                    <div
+                      class="skill-progress bg-gradient-to-r from-green-500 to-emerald-500"
+                      data-width="80%"
+                    ></div>
+                  </div>
+                </div>
+                <div>
+                  <div class="flex justify-between mb-1">
+                    <span class="text-gray-300">React / Next.js</span
+                    ><span class="text-purple-300">60%</span>
+                  </div>
+                  <div class="skill-bar">
+                    <div
+                      class="skill-progress bg-gradient-to-r from-blue-500 to-cyan-500"
+                      data-width="60%"
+                    ></div>
+                  </div>
+                </div>
+                <div>
+                  <div class="flex justify-between mb-1">
+                    <span class="text-gray-300">PyTorch / TensorFlow</span
+                    ><span class="text-purple-300">70%</span>
+                  </div>
+                  <div class="skill-bar">
+                    <div
+                      class="skill-progress bg-gradient-to-r from-orange-500 to-red-500"
+                      data-width="70%"
+                    ></div>
+                  </div>
+                </div>
+                <div>
+                  <div class="flex justify-between mb-1">
+                    <span class="text-gray-300">Git / Docker</span
+                    ><span class="text-purple-300">80%</span>
+                  </div>
+                  <div class="skill-bar">
+                    <div
+                      class="skill-progress bg-gradient-to-r from-gray-500 to-gray-300"
+                      data-width="80%"
+                    ></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="md:col-span-2">
+              <h3 class="text-2xl font-bold mb-4 text-purple-300">
+                Języki obce
+              </h3>
+              <div class="grid md:grid-cols-3 gap-4">
+                <div class="text-center">
+                  <div class="text-2xl font-bold text-purple-300">Polski</div>
+                  <div class="text-sm text-gray-400">Native</div>
+                </div>
+                <div class="text-center">
+                  <div class="text-2xl font-bold text-purple-300">
+                    Angielski
+                  </div>
+                  <div class="text-sm text-gray-400">B2 (85%)</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Nowa sekcja Projekty -->
+      <div id="proj-tab" class="tab-content hidden">
+        <div class="space-y-6 animate-fade-in">
+          <h2 class="text-4xl font-bold mb-8 text-purple-300">Projekty</h2>
+          <div class="grid md:grid-cols-2 gap-6">
+            <div
+              class="bg-gradient-to-br from-slate-800/50 to-slate-900/50 backdrop-blur-lg border border-purple-500/20 rounded-xl p-6 hover:scale-105 transition-transform"
+            >
+              <h3 class="text-xl font-bold mb-2 text-purple-300">
+                Inteligentny Asystent Głosowy
+              </h3>
+              <p class="text-gray-300 mb-4">
+                Asystent głosowy z integracją GPT do odpowiedzi na pytania
+                użytkownika.
+              </p>
+              <div class="flex flex-wrap gap-2 mb-4">
+                <span
+                  class="px-2 py-1 bg-purple-500/20 text-purple-300 rounded text-sm"
+                  >Python</span
+                >
+                <span
+                  class="px-2 py-1 bg-green-500/20 text-green-300 rounded text-sm"
+                  >OpenAI</span
+                >
+                <span
+                  class="px-2 py-1 bg-blue-500/20 text-blue-300 rounded text-sm"
+                  >SpeechRecognition</span
+                >
+              </div>
+              <a
+                href="https://github.com/dawidtrojanowski/intelligent-voice-assistant"
+                target="_blank"
+                class="text-purple-400 hover:text-purple-300 font-semibold"
+                >GitHub →</a
+              >
+            </div>
+            <div
+              class="bg-gradient-to-br from-slate-800/50 to-slate-900/50 backdrop-blur-lg border border-purple-500/20 rounded-xl p-6 hover:scale-105 transition-transform"
+            >
+              <h3 class="text-xl font-bold mb-2 text-purple-300">
+                System Rekomendacji Filmów
+              </h3>
+              <p class="text-gray-300 mb-4">
+                System rekomendacyjny oparty na collaborative filtering.
+              </p>
+              <div class="flex flex-wrap gap-2 mb-4">
+                <span
+                  class="px-2 py-1 bg-purple-500/20 text-purple-300 rounded text-sm"
+                  >Python</span
+                >
+                <span
+                  class="px-2 py-1 bg-orange-500/20 text-orange-300 rounded text-sm"
+                  >Scikit-learn</span
+                >
+              </div>
+              <a
+                href="https://github.com/dawidtrojanowski/movie-recommender"
+                target="_blank"
+                class="text-purple-400 hover:text-purple-300 font-semibold"
+                >GitHub →</a
+              >
+            </div>
+            <div
+              class="bg-gradient-to-br from-slate-800/50 to-slate-900/50 backdrop-blur-lg border border-purple-500/20 rounded-xl p-6 hover:scale-105 transition-transform"
+            >
+              <h3 class="text-xl font-bold mb-2 text-purple-300">
+                Aplikacja do Zarządzania Zadaniami
+              </h3>
+              <p class="text-gray-300 mb-4">
+                Full-stack app z autentykacją i real-time updates.
+              </p>
+              <div class="flex flex-wrap gap-2 mb-4">
+                <span
+                  class="px-2 py-1 bg-blue-500/20 text-blue-300 rounded text-sm"
+                  >Django</span
+                >
+                <span
+                  class="px-2 py-1 bg-cyan-500/20 text-cyan-300 rounded text-sm"
+                  >React</span
+                >
+              </div>
+              <a
+                href="https://github.com/dawidtrojanowski/task-manager"
+                target="_blank"
+                class="text-purple-400 hover:text-purple-300 font-semibold"
+                >GitHub →</a
+              >
+            </div>
+            <div
+              class="bg-gradient-to-br from-slate-800/50 to-slate-900/50 backdrop-blur-lg border border-purple-500/20 rounded-xl p-6 hover:scale-105 transition-transform"
+            >
+              <h3 class="text-xl font-bold mb-2 text-purple-300">
+                Agent RL dla CartPole
+              </h3>
+              <p class="text-gray-300 mb-4">
+                Agent uczenia ze wzmocnieniem do gry CartPole.
+              </p>
+              <div class="flex flex-wrap gap-2 mb-4">
+                <span
+                  class="px-2 py-1 bg-purple-500/20 text-purple-300 rounded text-sm"
+                  >Python</span
+                >
+                <span
+                  class="px-2 py-1 bg-orange-500/20 text-orange-300 rounded text-sm"
+                  >Stable Baselines3</span
+                >
+              </div>
+              <a
+                href="https://github.com/dawidtrojanowski/rl-cartpole"
+                target="_blank"
+                class="text-purple-400 hover:text-purple-300 font-semibold"
+                >GitHub →</a
+              >
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Nowy tab: Python Playground z Pyodide -->
+      <div id="playground-tab" class="tab-content hidden">
+        <div class="space-y-6 animate-fade-in">
+          <h2 class="text-4xl font-bold mb-8 text-purple-300">
+            Python Playground
+          </h2>
+          <p class="text-gray-300 mb-6">
+            Przetestuj Python w przeglądarce! Wsparcie dla NumPy, Pandas,
+            Matplotlib (wkrótce pełne).
+          </p>
+          <div class="grid md:grid-cols-2 gap-6">
+            <div>
+              <label class="block text-gray-300 mb-2 font-semibold"
+                >Edytor kodu</label
+              >
+              <textarea id="code-editor" class="w-full">
+# Przykładowy kod:
+print('Witaj w moim portfolio!')
+import sys
+print('Python version:', sys.version)</textarea
+              >
+              <button
+                id="run-btn"
+                class="mt-2 bg-green-600 hover:bg-green-500 px-4 py-2 rounded-lg text-white font-semibold transition-colors"
+              >
+                Run Code
+              </button>
+            </div>
+            <div>
+              <label class="block text-gray-300 mb-2 font-semibold"
+                >Wynik</label
+              >
+              <pre
+                id="py-output"
+                class="bg-slate-800 p-4 rounded-lg h-96 overflow-auto text-green-300 font-mono text-sm"
+              ></pre>
+            </div>
+          </div>
+          <p class="text-sm text-gray-500">
+            Zainstalowane pakiety: numpy, pandas, matplotlib (ładowane
+            dynamicznie).
+          </p>
+        </div>
+      </div>
+
+      <!-- Kontakt - zaktualizowany, z EmailJS -->
+      <div id="contact-tab" class="tab-content hidden">
+        <div class="space-y-8 animate-fade-in">
+          <div
+            class="bg-gradient-to-br from-purple-500/10 to-pink-500/10 backdrop-blur-lg border border-purple-500/20 rounded-2xl p-8"
+          >
+            <h2 class="text-4xl font-bold mb-6 text-purple-300">Kontakt</h2>
+            <p class="text-lg text-gray-300 mb-8">Napisz do mnie!</p>
+            <div class="grid md:grid-cols-2 gap-6">
+              <div class="space-y-4">
+                <input
+                  type="email"
+                  id="email-input"
+                  placeholder="Twój email"
+                  class="w-full py-3 px-4 rounded-lg bg-slate-700 text-white border border-purple-500/30 focus:border-purple-400 outline-none"
+                />
+                <textarea
+                  id="message-input"
+                  placeholder="Twoja wiadomość"
+                  rows="4"
+                  class="w-full py-3 px-4 rounded-lg bg-slate-700 text-white border border-purple-500/30 focus:border-purple-400 outline-none"
+                ></textarea>
+                <button
+                  id="send-btn"
+                  class="w-full py-3 px-4 rounded-lg bg-purple-500 hover:bg-purple-600 transition-all"
+                >
+                  Wyślij
+                </button>
+                <div id="form-message" class="mt-4 hidden p-3 rounded-lg"></div>
+              </div>
+              <div class="space-y-4">
+                <div
+                  class="bg-slate-800/50 rounded-xl p-4 hover:bg-slate-700/50"
+                >
+                  <p class="text-gray-400 mb-1">Email</p>
+                  <p class="text-purple-300">
+                    dawid.trojanowski.stud@pw.edu.pl
+                  </p>
+                </div>
+                <div
+                  class="bg-slate-800/50 rounded-xl p-4 hover:bg-slate-700/50"
+                >
+                  <p class="text-gray-400 mb-1">LinkedIn</p>
+                  <a
+                    href="https://www.linkedin.com/in/dawid-trojanowski-4b0a82239/"
+                    target="_blank"
+                    class="text-purple-300 hover:text-purple-400"
+                    >linkedin.com/in/dawid-trojanowski</a
+                  >
+                </div>
+                <div
+                  class="bg-slate-800/50 rounded-xl p-4 hover:bg-slate-700/50"
+                >
+                  <p class="text-gray-400 mb-1">GitHub</p>
+                  <a
+                    href="https://github.com/dawidtrojanowski"
+                    target="_blank"
+                    class="text-purple-300 hover:text-purple-400"
+                    >github.com/dawidtrojanowski</a
+                  >
+                </div>
+              </div>
+            </div>
+            <p class="text-xs text-gray-500 mt-4">
+              Formularz używa EmailJS -
+              <a href="https://www.emailjs.com" target="_blank"
+                >skonfiguruj klucze poniżej w kodzie JS</a
+              >
+            </p>
+          </div>
+        </div>
+      </div>
+    </main>
+
+    <footer
+      class="border-t border-purple-500/30 backdrop-blur-sm bg-black/20 mt-16"
+    >
+      <div class="container mx-auto px-6 py-8 text-center text-gray-400">
+        <p>Dawid Trojanowski © 2024. Zbudowane z ❤️ i nowymi technologiami.</p>
+      </div>
+    </footer>
+
+    <script>
+      // Inicjalizacja tsParticles
+      tsParticles.load("tsparticles", {
+        fullScreen: { enable: false, zIndex: 0 },
+        particles: {
+          number: { value: 80 },
+          color: { value: "#c084fc" },
+          shape: { type: "circle" },
+          opacity: { value: 0.5, random: true },
+          size: { value: 3, random: true },
+          links: {
+            enable: true,
+            distance: 150,
+            color: "#c084fc",
+            opacity: 0.4,
+            width: 1,
+          },
+          move: { enable: true, speed: 2, random: true, out_mode: "out" },
+        },
+        interactivity: {
+          events: {
+            onhover: { enable: true, mode: "repulse" },
+            onclick: { enable: true, mode: "push" },
+          },
+          modes: {
+            repulse: { distance: 100 },
+            push: { quantity: 2 },
+          },
+        },
+        retina_detect: true,
+      });
+
+      // EmailJS - ZASTĄP SWOIMI KLUCZAMI z dashboard.emailjs.com
+      emailjs.init("YOUR_PUBLIC_KEY"); // Twój Public Key
+
+      // Funkcje tab (z GSAP dla skills)
+      function showTab(tabName) {
+        document.querySelectorAll(".tab-content").forEach((tab) => {
+          tab.classList.add("hidden");
+        });
+        setTimeout(() => {
+          document.getElementById(tabName + "-tab").classList.remove("hidden");
+          if (tabName === "skills") animateSkillBarsGSAP();
+          if (tabName === "playground") initEditor();
+        }, 150);
+
+        document
+          .querySelectorAll(".tab-btn")
+          .forEach((btn) =>
+            btn.classList.remove("bg-purple-500", "text-white")
+          );
+        document
+          .querySelector(`[data-tab="${tabName}"]`)
+          .classList.add("bg-purple-500", "text-white");
+
+        closeMobileMenu();
+      }
+
+      // Animacja skill bars z GSAP
+      function animateSkillBarsGSAP() {
+        gsap.from(".skill-progress", {
+          width: 0,
+          duration: 1.5,
+          stagger: 0.2,
+          ease: "power3.out",
+        });
+      }
+
+      // Theme toggle z localStorage
+      const themeToggle = document.getElementById("theme-toggle");
+      const sunIcon = document.getElementById("sun-icon");
+      const moonIcon = document.getElementById("moon-icon");
+      let currentTheme = localStorage.getItem("theme") || "dark";
+      if (currentTheme === "light") {
+        document.body.classList.add("light-mode");
+        document.body.style.background =
+          "linear-gradient(to br, #f8fafc, #e2e8f0, #f8fafc)";
+        document.body.style.color = "#0f172a";
+        sunIcon.classList.add("hidden");
+        moonIcon.classList.remove("hidden");
+      }
+      themeToggle.addEventListener("click", () => {
+        document.body.classList.toggle("light-mode");
+        const isLight = document.body.classList.contains("light-mode");
+        localStorage.setItem("theme", isLight ? "light" : "dark");
+        if (isLight) {
+          document.body.style.background =
+            "linear-gradient(to br, #f8fafc, #e2e8f0, #f8fafc)";
+          document.body.style.color = "#0f172a";
+          sunIcon.classList.add("hidden");
+          moonIcon.classList.remove("hidden");
+        } else {
+          document.body.style.background =
+            "linear-gradient(to br, #0f0f23, #312e81, #0f0f23)";
+          document.body.style.color = "white";
+          sunIcon.classList.remove("hidden");
+          moonIcon.classList.add("hidden");
+        }
+      });
+
+      // Mobile menu bez zmian
+      const hamburger = document.getElementById("hamburger");
+      const navMenu = document.getElementById("nav-menu");
+      hamburger.addEventListener("click", () => {
+        hamburger.classList.toggle("active");
+        navMenu.classList.toggle("active");
+      });
+      function closeMobileMenu() {
+        hamburger.classList.remove("active");
+        navMenu.classList.remove("active");
+      }
+
+      // Kontakt form z EmailJS - ZASTĄP service_id i template_id
+      const sendBtn = document.getElementById("send-btn");
+      sendBtn.addEventListener("click", () => {
+        const email = document.getElementById("email-input").value.trim();
+        const message = document.getElementById("message-input").value.trim();
+        if (!email || !message)
+          return showFormMessage("Wypełnij pola", "error");
+        const templateParams = {
+          from_email: email,
+          to_name: "Dawid",
+          message: message,
+        };
+        emailjs
+          .send("YOUR_SERVICE_ID", "YOUR_TEMPLATE_ID", templateParams)
+          .then(() => {
+            showFormMessage("Wiadomość wysłana!", "success");
+            document.getElementById("email-input").value = "";
+            document.getElementById("message-input").value = "";
+          })
+          .catch((err) => showFormMessage("Błąd: " + err.text, "error"));
+      });
+      function showFormMessage(text, type) {
+        const msg = document.getElementById("form-message");
+        msg.textContent = text;
+        msg.className = `mt-4 p-3 rounded-lg ${
+          type === "error"
+            ? "bg-red-500/20 text-red-300 border border-red-500/30"
+            : "bg-green-500/20 text-green-300 border border-green-500/30"
+        }`;
+        msg.classList.remove("hidden");
+        setTimeout(() => msg.classList.add("hidden"), 5000);
+      }
+
+      // Python Playground
+      let editor,
+        pyodide,
+        pyodideReady = false;
+      function initEditor() {
+        if (editor) return;
+        editor = CodeMirror.fromTextArea(
+          document.getElementById("code-editor"),
+          {
+            mode: "python",
+            theme: "monokai",
+            lineNumbers: true,
+            indentUnit: 4,
+            viewportMargin: Infinity,
+          }
+        );
+      }
+      document.getElementById("run-btn").addEventListener("click", async () => {
+        const btn = document.getElementById("run-btn");
+        btn.disabled = true;
+        btn.textContent = "Uruchamianie...";
+        const output = document.getElementById("py-output");
+        try {
+          if (!pyodideReady) {
+            pyodide = await loadPyodide({
+              indexURL: "https://cdn.jsdelivr.net/pyodide/v0.24.1/full/",
+            });
+            await pyodide.loadPackage(["numpy", "pandas", "matplotlib"]);
+            pyodideReady = true;
+          }
+          // Przechwyt output
+          pyodide.runPython(`
+import sys
+from io import StringIO
+old_stdout = sys.stdout
+sys.stdout = mystdout = StringIO()
+          `);
+          const code = editor.getValue();
+          await pyodide.runPythonAsync(code);
+          const captured = pyodide.runPython("mystdout.getvalue()");
+          pyodide.runPython("sys.stdout = old_stdout");
+          output.textContent = captured || "Wykonano pomyślnie (brak outputu)";
+        } catch (err) {
+          output.textContent = `Błąd: ${err.message}`;
+        }
+        btn.disabled = false;
+        btn.textContent = "Run Code";
+      });
+
+      // Init
+      document.addEventListener("DOMContentLoaded", () => {
+        showTab("intro");
+      });
+    </script>
+  </body>
+</html>

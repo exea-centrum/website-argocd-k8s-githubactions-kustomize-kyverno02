@@ -1,0 +1,468 @@
+<!DOCTYPE html>
+<html lang="pl">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Dawid Trojanowski — Rebuilt (2025)</title>
+
+    <!-- Tailwind CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Load Font + Icons -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap"
+      rel="stylesheet"
+    />
+
+    <style>
+      :root {
+        --accent: #9b5cf6;
+      }
+      html,
+      body {
+        font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto,
+          "Helvetica Neue", Arial;
+      }
+      .glass {
+        background: linear-gradient(
+          135deg,
+          rgba(255, 255, 255, 0.02),
+          rgba(255, 255, 255, 0.01)
+        );
+        backdrop-filter: blur(6px);
+      }
+      /* simple canvas star background */
+      #bg-canvas {
+        position: fixed;
+        inset: 0;
+        z-index: 0;
+      }
+      /* typewriter */
+      .typewriter {
+        overflow: hidden;
+        border-right: 2px solid var(--accent);
+        white-space: nowrap;
+        animation: typing 2.25s steps(40, end), blink 0.8s infinite;
+      }
+      @keyframes typing {
+        from {
+          width: 0;
+        }
+        to {
+          width: 100%;
+        }
+      }
+      @keyframes blink {
+        50% {
+          border-color: transparent;
+        }
+      }
+      /* skill bars */
+      .skill-bar {
+        height: 10px;
+        background: rgba(255, 255, 255, 0.06);
+        border-radius: 999px;
+      }
+      .skill-fill {
+        height: 100%;
+        border-radius: 999px;
+        transition: width 1.2s cubic-bezier(0.2, 0.9, 0.2, 1);
+      }
+      /* responsive nav */
+      .nav-toggle {
+        display: none;
+      }
+      @media (max-width: 768px) {
+        .nav-toggle {
+          display: block;
+        }
+      }
+    </style>
+  </head>
+  <body
+    class="bg-slate-900 text-slate-100 min-h-screen relative overflow-x-hidden"
+  >
+    <!-- decorative canvas (particles / subtle) -->
+    <canvas id="bg-canvas"></canvas>
+
+    <!-- Top nav -->
+    <header class="z-30 relative">
+      <div
+        class="max-w-6xl mx-auto px-6 py-6 flex items-center justify-between"
+      >
+        <div class="flex items-center gap-3">
+          <div
+            class="w-12 h-12 rounded-xl bg-gradient-to-br from-purple-600 to-pink-500 flex items-center justify-center shadow-lg"
+          >
+            <svg
+              width="26"
+              height="26"
+              viewBox="0 0 24 24"
+              fill="none"
+              class="text-white"
+            >
+              <path
+                d="M12 12c2.761 0 5-2.239 5-5s-2.239-5-5-5-5 2.239-5 5 2.239 5 5 5zM4 20a8 8 0 0116 0"
+                stroke="white"
+                stroke-width="1.2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              ></path>
+            </svg>
+          </div>
+          <div>
+            <h1 class="text-xl font-bold tracking-tight">
+              Dawid <span class="text-purple-300">Trojanowski</span>
+            </h1>
+            <p class="text-xs text-slate-400 -mt-1">
+              DevOps • SaaS • ERP • Production & CNC
+            </p>
+          </div>
+        </div>
+
+        <nav class="hidden md:flex items-center gap-3 text-sm">
+          <button
+            data-scroll="#hero"
+            class="py-2 px-3 rounded-md hover:bg-white/5"
+          >
+            Start
+          </button>
+          <button
+            data-scroll="#services"
+            class="py-2 px-3 rounded-md hover:bg-white/5"
+          >
+            Usługi
+          </button>
+          <button
+            data-scroll="#experience"
+            class="py-2 px-3 rounded-md hover:bg-white/5"
+          >
+            Zawodowo
+          </button>
+          <button
+            data-scroll="#contact"
+            class="py-2 px-3 rounded-md hover:bg-white/5"
+          >
+            Kontakt
+          </button>
+        </nav>
+
+        <div class="flex items-center gap-3">
+          <a
+            href="mailto:trojanowski.david@gmail.com"
+            class="hidden md:inline-block text-sm bg-white/6 px-4 py-2 rounded-md"
+            >Napisz</a
+          >
+          <button
+            id="mobile-open"
+            class="nav-toggle md:hidden p-2 bg-white/5 rounded-md"
+          >
+            ≡
+          </button>
+        </div>
+      </div>
+
+      <!-- mobile menu -->
+      <div
+        id="mobile-menu"
+        class="md:hidden hidden bg-slate-800/60 glass px-6 pb-6"
+      >
+        <div class="flex flex-col gap-2">
+          <a data-scroll="#hero" class="py-3">Start</a>
+          <a data-scroll="#services" class="py-3">Usługi</a>
+          <a data-scroll="#experience" class="py-3">Zawodowo</a>
+          <a data-scroll="#contact" class="py-3">Kontakt</a>
+        </div>
+      </div>
+    </header>
+
+    <!-- MAIN -->
+    <main class="relative z-10">
+      <section
+        id="hero"
+        class="max-w-6xl mx-auto px-6 py-20 grid md:grid-cols-2 gap-8 items-center"
+      >
+        <div>
+          <h2 class="text-3xl sm:text-4xl font-extrabold leading-tight">
+            Cześć — jestem
+            <span
+              class="text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-pink-400"
+              >Dawid Trojanowski</span
+            >
+          </h2>
+          <p class="mt-4 text-slate-300">
+            Zajmuję się infrastrukturą wysokiej dostępności, chmurą, systemami
+            ERP/SaaS oraz oprogramowaniem produkcyjnym (CNC, EDI, WinPro).
+          </p>
+
+          <div class="mt-6 flex gap-3">
+            <a
+              href="#contact"
+              class="px-4 py-2 rounded-md bg-gradient-to-r from-purple-600 to-pink-500 shadow hover:scale-[1.02]"
+              >Kontakt</a
+            >
+            <a
+              href="#services"
+              class="px-4 py-2 rounded-md border border-white/10"
+              >Oferta</a
+            >
+          </div>
+
+          <div class="mt-8 grid grid-cols-2 gap-3 text-xs text-slate-400">
+            <div class="glass p-3 rounded-lg">
+              <div class="font-semibold text-sm">Email</div>
+              <div class="truncate">trojanowski.david@gmail.com</div>
+            </div>
+            <div class="glass p-3 rounded-lg">
+              <div class="font-semibold text-sm">Telefon</div>
+              <div class="truncate">+48 508 066 905</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="relative">
+          <div class="glass rounded-2xl p-6 shadow-xl">
+            <div class="typewriter text-lg font-medium">
+              Cloud HA/LB · ProxMox · K8e · Xen · Ceph · OpenShift · ERP · ECM ·
+              CNC
+            </div>
+
+            <div class="mt-6 grid grid-cols-1 gap-4">
+              <div class="text-sm text-slate-300">Wybrane obszary:</div>
+              <ul class="list-disc pl-5 text-slate-300">
+                <li>Cloud HA + Load Balancing (KVM, ProxMox, Ceph, LVS)</li>
+                <li>SaaS / ERP / ECM / BI / ESB (wso2) / CRM / HRM</li>
+                <li>Produkcja: Windows, CNC, EDI, Firebird, FastReport</li>
+              </ul>
+            </div>
+
+            <div class="mt-4 flex gap-2">
+              <a class="px-3 py-2 rounded-md bg-white/6">Pobierz CV</a>
+              <a class="px-3 py-2 rounded-md border border-white/6"
+                >Portfolio</a
+              >
+            </div>
+          </div>
+
+          <!-- subtle graph (JS animated) -->
+          <div
+            id="mini-graph"
+            class="absolute -bottom-8 right-4 w-44 h-20 bg-gradient-to-br from-slate-800/40 to-slate-900/20 glass rounded-lg p-3 shadow-lg"
+          >
+            <svg
+              viewBox="0 0 200 60"
+              class="w-full h-full"
+              preserveAspectRatio="none"
+            >
+              <polyline
+                id="poly"
+                points="0,40 20,30 40,34 60,22 80,26 100,18 120,24 140,12 160,20 180,16 200,10"
+                fill="none"
+                stroke="url(#g)"
+                stroke-width="3"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              />
+              <defs>
+                <linearGradient id="g" x1="0" x2="1">
+                  <stop offset="0" stop-color="#8b5cf6" stop-opacity="1" />
+                  <stop offset="1" stop-color="#f472b6" stop-opacity="1" />
+                </linearGradient>
+              </defs>
+            </svg>
+          </div>
+        </div>
+      </section>
+
+      <section id="services" class="max-w-6xl mx-auto px-6 py-12">
+        <h3 class="text-2xl font-bold">Usługi i kompetencje</h3>
+        <div class="mt-6 grid md:grid-cols-3 gap-6">
+          <div class="p-6 glass rounded-xl">
+            <h4 class="font-semibold">Cloud & Infrastruktur</h4>
+            <p class="mt-2 text-slate-300 text-sm">
+              ProxMox, KVM, Ceph, K8e, OpenStack, HA, Load Balancers, Ansible
+            </p>
+          </div>
+          <div class="p-6 glass rounded-xl">
+            <h4 class="font-semibold">SaaS / ERP / ECM</h4>
+            <p class="mt-2 text-slate-300 text-sm">
+              Projektowanie i integracja systemów ERP, BI, ESB (wso2), CRM
+            </p>
+          </div>
+          <div class="p-6 glass rounded-xl">
+            <h4 class="font-semibold">Produkcja & Embedded</h4>
+            <p class="mt-2 text-slate-300 text-sm">
+              Aplikacje do maszyn CNC, EDI, Firebird, integracje przemysłowe
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <section id="experience" class="max-w-6xl mx-auto px-6 py-12">
+        <h3 class="text-2xl font-bold">Doświadczenie — skrót</h3>
+        <div class="mt-6 space-y-4">
+          <div class="glass p-4 rounded-lg">
+            <div class="flex items-center justify-between">
+              <div>
+                <div class="font-semibold">
+                  Senior/DevOps & Infrastructure (Freelance / Consultant)
+                </div>
+                <div class="text-xs text-slate-400">
+                  Cloud HA, ProxMox, ManagerIQ, Xen, Ceph — projekty produkcyjne
+                </div>
+              </div>
+              <div class="text-xs text-slate-400">20+ lat doświadczenia</div>
+            </div>
+          </div>
+
+          <div class="glass p-4 rounded-lg">
+            <div class="font-semibold">Aplikacje produkcyjne</div>
+            <div class="text-xs text-slate-400">
+              Windows desktop, Firebird, FastReport, CNC drivers, EDI
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section id="contact" class="max-w-6xl mx-auto px-6 py-12">
+        <h3 class="text-2xl font-bold">Kontakt</h3>
+        <div class="mt-6 grid md:grid-cols-2 gap-6">
+          <div class="glass p-6 rounded-xl">
+            <p class="text-slate-300">
+              Masz pytanie lub projekt? Napisz lub zadzwoń.
+            </p>
+            <div class="mt-4 space-y-3">
+              <div class="text-xs text-slate-400">Email</div>
+              <a
+                href="mailto:trojanowski.david@gmail.com"
+                class="block font-medium"
+                >trojanowski.david@gmail.com</a
+              >
+              <div class="text-xs text-slate-400 mt-2">Telefon</div>
+              <a href="tel:+48508066905" class="block font-medium"
+                >+48 508 066 905</a
+              >
+
+              <div class="mt-6 flex gap-2">
+                <a
+                  id="download-vcard"
+                  class="px-3 py-2 rounded-md bg-gradient-to-r from-purple-600 to-pink-500 text-sm"
+                  >Pobierz vCard</a
+                >
+                <a
+                  id="open-mail"
+                  href="mailto:trojanowski.david@gmail.com?subject=Kontakt%20ze%20strony"
+                  class="px-3 py-2 rounded-md border border-white/10 text-sm"
+                  >Napisz</a
+                >
+              </div>
+            </div>
+          </div>
+
+          <form
+            id="contact-form"
+            class="glass p-6 rounded-xl"
+            onsubmit="return false;"
+          >
+            <label class="text-xs text-slate-400">Twój email</label>
+            <input
+              id="cf-email"
+              type="email"
+              required
+              class="w-full mt-2 p-3 rounded-md bg-transparent border border-white/10"
+              placeholder="twoj@email.com"
+            />
+            <label class="text-xs text-slate-400 mt-4 block">Wiadomość</label>
+            <textarea
+              id="cf-message"
+              rows="5"
+              class="w-full mt-2 p-3 rounded-md bg-transparent border border-white/10"
+              placeholder="Opisz swój projekt..."
+            ></textarea>
+            <div class="mt-4 flex gap-3">
+              <button
+                id="cf-send"
+                class="px-4 py-2 rounded-md bg-gradient-to-r from-purple-600 to-pink-500"
+              >
+                Wyślij (mailto)
+              </button>
+              <button
+                id="cf-download"
+                class="px-4 py-2 rounded-md border border-white/10"
+              >
+                Zapisz jako plik
+              </button>
+            </div>
+            <div id="cf-msg" class="text-sm text-green-300 mt-3 hidden"></div>
+          </form>
+        </div>
+      </section>
+
+      <footer class="max-w-6xl mx-auto px-6 py-8 text-center text-slate-400">
+        <div>
+          © Dawid Trojanowski • Zawartość pobrana z Google Sites: dane
+          kontaktowe i listy kompetencji
+        </div>
+      </footer>
+    </main>
+
+    <!-- Minimal JS: interactive bits + tiny animations -->
+    <script>
+      // Data deduped from your Google Sites page (email, phone, keywords)
+      const DATA = {
+        email: 'trojanowski.david@gmail.com',
+        phone: '+48 508 066 905',
+        keywords: ['Cloud HA', 'ProxMox', 'ManagerIQ', 'LCMC', 'Xen', 'K8e', 'Ceph', 'ERP', 'SaaS', 'CNC', 'EDI']
+      };
+
+      // Smooth scroll for nav
+      document.querySelectorAll('[data-scroll]').forEach(el=>el.addEventListener('click', e=>{const t=document.querySelector(el.getAttribute('data-scroll'));t.scrollIntoView({behavior:'smooth',block:'start'})}));
+
+      // Mobile menu toggle
+      document.getElementById('mobile-open').addEventListener('click',()=>{document.getElementById('mobile-menu').classList.toggle('hidden')});
+
+      // tiny animated polyline in hero: randomize points
+      (function animatePoly(){const poly=document.getElementById('poly');if(!poly)return;const rand=()=>Math.floor(10+Math.random()*40);setInterval(()=>{const pts=[0,40,20,30,40,34,60,22,80,26,100,18,120,24,140,12,160,20,180,16,200,10];for(let i=1;i<pts.length;i+=2){pts[i]=20+Math.floor(Math.random()*30)}poly.setAttribute('points',pts.join(' '))},1600)})();
+
+      // mini graph animation (already handled above) — nothing heavy
+
+      // skill bars appear on scroll
+      const observer = new IntersectionObserver((entries)=>{entries.forEach(e=>{if(e.isIntersecting){document.querySelectorAll('.skill-fill').forEach((f)=>{f.style.width=f.dataset.width})}}),{threshold:.2});
+      const skillsSection=document.getElementById('services');if(skillsSection)observer.observe(skillsSection);
+
+      // contact form: create mailto or download .eml
+      document.getElementById('cf-send').addEventListener('click',()=>{
+        const email=encodeURIComponent(document.getElementById('cf-email').value||'');
+        const msg=encodeURIComponent(document.getElementById('cf-message').value||'');
+        if(!email||!msg){showCfMsg('Proszę wypełnić pola','red');return}
+        const subject=encodeURIComponent('Kontakt ze strony');
+        window.location.href = `mailto:${DATA.email}?subject=${subject}&body=${msg}%0A%0AFrom:%20${email}`;
+      });
+
+      document.getElementById('cf-download').addEventListener('click',()=>{
+        const email=document.getElementById('cf-email').value||'';
+        const msg=document.getElementById('cf-message').value||'';
+        const blob=new Blob([`From: ${email}\nTo: ${DATA.email}\nSubject: Kontakt ze strony\n\n${msg}`],{type:'text/plain'});
+        const url=URL.createObjectURL(blob);const a=document.createElement('a');a.href=url;a.download='message.txt';document.body.appendChild(a);a.click();a.remove();URL.revokeObjectURL(url);showCfMsg('Plik został pobrany','green');
+      });
+
+      function showCfMsg(t,c){const el=document.getElementById('cf-msg');el.textContent=t;el.classList.remove('hidden');el.style.color=c==='green'?'#86efac':'#fca5a5';setTimeout(()=>el.classList.add('hidden'),4500)}
+
+      // vCard generation
+      document.getElementById('download-vcard').addEventListener('click',()=>{
+        const v = `BEGIN:VCARD\nVERSION:3.0\nFN:Dawid Trojanowski\nTEL;TYPE=CELL:${DATA.phone}\nEMAIL:${DATA.email}\nEND:VCARD`;
+        const b=new Blob([v],{type:'text/vcard'});const u=URL.createObjectURL(b);const a=document.createElement('a');a.href=u;a.download='dawid_trojanowski.vcf';document.body.appendChild(a);a.click();a.remove();URL.revokeObjectURL(u);
+      });
+
+      // background canvas particles (lightweight)
+      (function(){const c=document.getElementById('bg-canvas');const d=c.getContext('2d');let w, h, parts=[];
+        function resize(){w=c.width=innerWidth;h=c.height=innerHeight;parts=[];for(let i=0;i<60;i++){parts.push({x:Math.random()*w,y:Math.random()*h,r:Math.random()*1.6+0.4,dx:(Math.random()-.5)/2,dy:(Math.random()-.5)/2,alpha:0.2+Math.random()*0.6})}}
+        function draw(){d.clearRect(0,0,w,h);for(const p of parts){p.x+=p.dx;p.y+=p.dy;if(p.x<0)p.x=w;if(p.x>w)p.x=0;if(p.y<0)p.y=h;if(p.y>h)p.y=0;d.beginPath();d.fillStyle=`rgba(155,92,246,${p.alpha})`;d.arc(p.x,p.y,p.r,0,Math.PI*2);d.fill()}requestAnimationFrame(draw)}
+        addEventListener('resize',resize);resize();draw();
+      })();
+
+      // polite accessibility: focus outlines when keyboard used
+      document.body.addEventListener('keydown',(e)=>{if(e.key==='Tab')document.documentElement.classList.add('show-focus')});
+    </script>
+  </body>
+</html>
